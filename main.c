@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -15,29 +16,29 @@ void stackInit(struct Stack* stack) {
     stack->top = -1;
 }
 
-int stackEmpt(struct Stack* stack){
+int stackEmpt(struct Stack* stack) {
     return stack->top == -1 ? 1 : 0;
 }
 
-int stackFull(struct Stack* stack){
+int stackFull(struct Stack* stack) {
     return stack->top == MAX_SIZE - 1 ? 1 : 0;
 }
 
 void stackPush(struct Stack* stack, char symb) {
-    if ( !stackFull(stack) ) {
-        stack->data[ ++(stack->top)] = symb;
+    if (!stackFull(stack)) {
+        stack->data[++(stack->top)] = symb;
     }
 }
 
 void stackPop(struct Stack* stack) {
-    if ( !stackEmpt(stack) ) {
+    if (!stackEmpt(stack)) {
         --(stack->top);
     }
 }
 
 char stackPeek(struct Stack* stack) {
-    if ( !stackEmpt(stack) )
-        return stack->data[ stack->top ] ;
+    if (!stackEmpt(stack))
+        return stack->data[stack->top];
     else return 0;
 }
 
@@ -48,7 +49,7 @@ int isOperation(char symb) {
     return 0;
 }
 
-void addOperations(char *dest, struct Stack *stack, int* n)
+void addOperations(char* dest, struct Stack* stack, int* n)
 {
     for (int i = 0; i <= stack->top; i++)
     {
@@ -57,7 +58,7 @@ void addOperations(char *dest, struct Stack *stack, int* n)
     stackInit(stack);
 }
 
-void parser(struct Stack *stack, char *str, char *dest)
+void parser(struct Stack* stack, char* str, char* dest)
 {
     int j = 0;
     for (int i = 0; str[i] != '\0'; i++)
@@ -75,18 +76,21 @@ void parser(struct Stack *stack, char *str, char *dest)
                 char newDest[MAX_SIZE];
                 char newStr[MAX_SIZE];
                 i++;
-                for (int checkBrack = 0, k = 0; str[i] != ')' && !checkBrack; i++, k++) {
+                int k = 0;
+                for (int checkBrack = 1; checkBrack; i++, k++) {
                     newStr[k] = str[i];
                     if (str[i] == '(') checkBrack++;
                     if (checkBrack && str[i] == ')') checkBrack--;
                 }
+                newStr[k - 1] = '\0';
                 parser(&newStack, newStr, newDest);
 
-                strcat(dest, newDest);
-                i = strlen(dest) - 2;
+                for (k = 0; newDest[k] != '\0'; k++, j++) {
+                    dest[j] = newDest[k];
+                }
+                
+                if (str[i] == '\0') break;
             }
-
-            if (str[i] == ')') continue;
         }
 
         int op = isOperation(str[i]);
@@ -125,17 +129,18 @@ void parser(struct Stack *stack, char *str, char *dest)
     dest[j] = '\0';
 }
 
-int main () {
+int main() {
     struct Stack stack;
     stackInit(&stack);
-    
+
     char dest[MAX_SIZE];
     char str[MAX_SIZE];
 
     scanf("%s", str);
 
-    parser(&stack,str,dest);
+    parser(&stack, str, dest);
     printf("%s", dest);
 
     return 0;
 }
+
