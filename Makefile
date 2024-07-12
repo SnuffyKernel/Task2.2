@@ -2,9 +2,9 @@ CC=gcc
 
 CFLAGS= -Wall -Werror -Wextra
 
-SRC=main.c error/error.c function_phone_book/function.c phone_book/phone_book.c
+SRC=main.c operation.c parser.c
 
-TARGET=phone_book.out
+TARGET=main
 
 all: build
 
